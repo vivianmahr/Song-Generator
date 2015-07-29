@@ -1,4 +1,6 @@
+
 class Note():
+    # both are used to convert string <-> midi#
     scale_A = ["A", "A#/Bb", "B", "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab"]
     scale_C = ["C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B"]
     scale_start = 21
@@ -48,8 +50,73 @@ class Note():
         octave = self.get_octave()
         return "{:2} {}".format(note, octave)
 
+    def apply_relation(self, relation, **kargs):
+        if relation == "2nd":
+            return [self, Note(self.number + 2)]
+        else: 
+            raise ValueError("Incorrect arguments")
+        # relation, num_notes
+        # Things that should be handled outside notes - repetition, going off chord,  1 steps
+
+    def _generate_rotated_notes(self, sharp=False):
+        note = self.get_note(sharp)
+        rotated_notes = list(Note.scale_A)
+        if "#" in note:
+            for i in range(len(rotated_notes)):
+                if "#" in rotated_notes[i]:
+                    rotated_notes[i] = rotated_notes[i][:2] 
+        elif "b" in note:
+            for i in range(len(rotated_notes)):
+                if "b" in rotated_notes[i]:
+                    rotated_notes[i] = rotated_notes[i][3:] 
+        while rotated_notes[0] != note:
+            rotated_notes.insert(0, rotated_notes.pop());
+        return rotated_notes
+
+    def generate_scale(self, scale="major", sharp=True):
+        """Generates a scale starting on this note."""
+        note = self.get_note(sharp)
+        rotated_notes = self._generate_rotated_notes(sharp)
+        steps = []
+
+        if scale == "major":
+            steps = (2, 2, 1, 2, 2, 2, 1)
+        elif scale == "natural minor":
+            steps = (2, 1, 2, 2, 1, 2, 2)
+        elif scale == "harmonic minor":
+            steps = (2, 1, 2, 2, 1, 3, 1)
+        elif scale == "melodic minor":
+            steps = (2, 1, 2, 2, 2, 2, 1)
+
+        result = [self]
+
+        difference = 0
+        for step in steps:
+            difference += step
+            result.append(Note(self.number + difference))
+
+        return result
+
 if __name__ == "__main__":
+    def stringify_list_of_notes(l, sharp=True):
+        res = ""
+        for note in l:
+            res += note.get_note(sharp) + "|"
+        return res
+
     for i in range(21, 109):
         n = Note(i)
         n2 = Note(n.get_note(), n.get_octave())
         assert(n.to_string() == n2.to_string())
+
+    c = Note("C", 3)
+    scale = c.generate_scale("major", True)
+    assert(stringify_list_of_notes(scale) == "C|D|E|F|G|A|B|C|")
+
+    a = Note("A", 3)
+    scale = a.generate_scale("natural minor", True)
+    assert(stringify_list_of_notes(scale) == "A|B|C|D|E|F|G|A|")
+
+    assert(stringify_list_of_notes(c.apply_relation("2nd")) == "C|D|")
+    assert(stringify_list_of_notes(c.apply_relation("2nd")) == "C|D|")
+

@@ -1,6 +1,5 @@
 import mido
 import random
-import conversion
 
 # See what's less confusing in the end - generating a bunch of notes 
 # and then their messages, or generating and working note by note

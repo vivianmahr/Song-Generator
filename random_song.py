@@ -1,5 +1,6 @@
 import mido
 import random
+import conversion
 
 # See what's less confusing in the end - generating a bunch of notes 
 # and then their messages, or generating and working note by note
@@ -7,6 +8,8 @@ import random
 #   Repetition
 #   Key
 #   Pacing in relation to closeby notes 
+
+
 class Note():
     def __init__(self, note, length, velocity, channel):
         self.channel = channel
@@ -18,6 +21,8 @@ class Note():
     def end(self, track):
         track.append(mido.Message('note_off', note=self.note, channel=self.channel, velocity=0, time=self.length))
 
+class Chord():
+    def __init__(self, note
 
 # Wrap in function according to inputs later
 

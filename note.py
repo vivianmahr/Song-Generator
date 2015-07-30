@@ -50,11 +50,30 @@ class Note():
         octave = self.get_octave()
         return "{:2} {}".format(note, octave)
 
-    def apply_relation(self, relation, **kargs):
+    def apply_relation(self, relation, direction=1, sharp=True, **kargs):
+        steps = []
         if relation == "2nd":
-            return [self, Note(self.number + 2)]
+            steps = (2,)
+        elif relation == "chord":
+            if kargs['scale'] == "major":
+                steps = (4, 3)
+            elif kargs['scale'] == "minor":
+                steps = (3, 4)
+        elif relation == "4th":
+            steps = (5,)
+        elif relation == "scale":
+            return self.generate_scale(kargs["scale"], sharp=sharp)
+        elif relation == "7th":
+            if kargs['scale'] == "major":
+                steps = (11,)
+            elif kargs['scale'] == "minor":
+                steps = (10,)
+        elif relation == "octave":
+            steps = (12,)
         else: 
             raise ValueError("Incorrect arguments")
+        steps = [s * direction for s in steps]
+        return self._generate_notes_from_note(steps)
         # relation, num_notes
         # Things that should be handled outside notes - repetition, going off chord,  1 steps
 
@@ -87,14 +106,17 @@ class Note():
             steps = (2, 1, 2, 2, 1, 3, 1)
         elif scale == "melodic minor":
             steps = (2, 1, 2, 2, 2, 2, 1)
+        else:
+            raise ValueError("{} is not a valid scale".format(scale))
 
+        return self._generate_notes_from_note(steps)
+
+    def _generate_notes_from_note(self, steps):
         result = [self]
-
         difference = 0
         for step in steps:
             difference += step
             result.append(Note(self.number + difference))
-
         return result
 
 if __name__ == "__main__":
@@ -120,3 +142,5 @@ if __name__ == "__main__":
     assert(stringify_list_of_notes(c.apply_relation("2nd")) == "C|D|")
     assert(stringify_list_of_notes(c.apply_relation("2nd")) == "C|D|")
 
+    assert(stringify_list_of_notes(c.apply_relation("chord", scale="major")) == "C|E|G|")
+    assert(stringify_list_of_notes(a.apply_relation("chord", scale="minor")) == "A|C|E|")

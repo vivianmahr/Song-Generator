@@ -33,7 +33,6 @@ class Melody():
                 length = kargs["length"]
                 key = kargs["key"]
                 num_beats = length / BEAT
-                print("37 ----", length)
                 
                 # def __init__(self, channel, length, velocity, *args):
                 note_length = random_note_length(length)
@@ -60,7 +59,6 @@ class Melody():
                 print("62 ----", stringify_list_of_notes(self.notes))
             else:
                 pass
-                print("65 ----", "not random")
         except Exception as E:
             raise E
 
@@ -84,7 +82,7 @@ with mido.MidiFile(type=1) as mid:
     time_signature = [int(n) for n in time_signature]
     bpm = 120
     channel = 1
-    measures = 4 
+    measures = 15
     repeat_chance = .5
     scale = "major"
     key = Note("C", 3).apply_relation("scale", scale=scale)

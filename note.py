@@ -54,6 +54,13 @@ class Note():
         steps = []
         if relation == "2nd":
             steps = (2,)
+        elif relation == "3rd":
+            if kargs['scale'] == "major":
+                steps = (4,)
+            elif kargs['scale'] == "minor":
+                steps = (3)
+        elif relation == "5th":
+            steps = (5,)
         elif relation == "chord":
             if kargs['scale'] == "major":
                 steps = (4, 3)
@@ -69,6 +76,8 @@ class Note():
             elif kargs['scale'] == "minor":
                 steps = (10,)
         elif relation == "octave":
+            steps = (12,)
+        elif relation == "repeat":
             steps = (12,)
         else: 
             raise ValueError("Incorrect arguments")

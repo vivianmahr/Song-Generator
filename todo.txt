@@ -1,0 +1,20 @@
+Refactoring
+
+Make key and "starting note" seperate - and see if you can make the starting note relative to last melody
+	but since this is intended to be a melody mainly generator, default to note3 if unspecified - can be edited later 
+
+Presets 
+
+Right now, eight and sixteenth notes are rather messily coupled - 
+
+Fix possible generation of out-of-midi-range notes (note < 21 or note > 108)
+
+repeat melody chance - it only affects melody, not note repetition
+
+Readme and think of a nice name
+
+UI - this is a giant pile of arguments 
+
+Choose instrument it plays in 
+
+multiple notes playing at a time 

@@ -8,6 +8,47 @@ from note import Note
 #   Repetition
 #   Key
 #   Pacing in relation to closeby notes 
+
+
+BEAT = 480
+LENGTH_DIST = {
+    BEAT / 16 : 0,    #
+    BEAT / 8  : 0,    #
+    BEAT / 4  : 1,    #
+    BEAT / 2  : 8,    # 
+    BEAT / 1  : 16,    # Quarter in /4 time sig
+    BEAT * 2  : 5,    #
+    BEAT * 3  : 3,    #
+    BEAT * 4  : 2     # 
+}
+"""
+LENGTH_DIST = {
+    BEAT / 16 : 0,    #
+    BEAT / 8  : 0,    #
+    BEAT / 4  : 18,    #
+    BEAT / 2  : 16,    # 
+    BEAT / 1  : 10,    # Quarter in /4 time sig
+    BEAT * 2  : 1,    #
+    BEAT * 3  : 1,    #
+    BEAT * 4  : 0     # 
+}
+"""
+NOTE_DISTRO_LIST = [4, 7, 8, 3, 8, 1, 2, 3]
+REPEAT_DISTRO_LIST = [8, 9, 5, 4, 3, 0, 0, 1]
+REPEAT_DISTRO_LIST = [0, 9, 5, 4, 3, 0, 0, 1]
+
+print(LENGTH_DIST, type(LENGTH_DIST))
+
+def weighted_choice(choices):
+    print(choices)
+    total = sum([weight for weight in choices.values()])
+    rand = random.uniform(0, total)
+    upto = 0
+    for choice, weight in choices.items():
+        if upto + weight > rand:
+            return choice
+        upto += weight
+
 def stringify_list_of_notes(l, sharp=True):
     res = ""
     for note in l:
@@ -15,15 +56,17 @@ def stringify_list_of_notes(l, sharp=True):
     return res
 
 def random_note_length(max_len):
-    #should depend on time signature
-    #possible = [1/8, 1/4, 1/2, 1, 2, 3, 4]
-    possible = [480/8, 480/4, 480/2, 480, 480 * 2, 480 * 3, 480 * 4]
-    choice_pool = []
-    i = 0
-    while i < len(possible) and possible[i] <= max_len:
-        choice_pool.append(possible[i])
-        i += 1
-    return random.choice(choice_pool)
+    res = {}
+    for choice, weight in LENGTH_DIST.items():
+        if choice <= max_len:
+            res[choice] = weight
+    return weighted_choice(res)
+
+def rotate_scale_to_note(scale, note):
+    result = list(scale)
+    while Note(result[0]).get_note()[0] != note.get_note()[0]:
+        result.insert(0, result.pop())
+    return result
 
 class Melody():
     def __init__(self, channel, **kargs):
@@ -40,22 +83,35 @@ class Melody():
                 self.notes = [Midi_Note(channel, note_length, 127, key[note_number])]
                 self.length = note_length
                 max_length = length - note_length
-                
                 while self.length < length:
-                    next_note_relation = random.choice(["2nd", "3rd", "4th", "5th", "7th", "octave", "repeat"])
-                    note_to_append = ""
-                    if next_note_relation == "repeat":
-                        if self.length + self.notes[-1].length <= length:
-                            note_to_append = self.notes[-1].copy()
-                        else:
-                            note_to_append = Midi_Note(channel, random_note_length(max_length), 127, self.notes[-1].number)
-                    else:
-                        notes = self.notes[-1].apply_relation(next_note_relation, scale=scale)
-                        note_to_append = Midi_Note(channel, random_note_length(max_length), 127, random.choice(notes).number)
+                    possible_notes = rotate_scale_to_note(key, self.notes[-1])
+
+                    up = random.choice([1, -1])
+                    possible_notes = [s + up * 12 for s in possible_notes]
+                    note = weighted_choice(dict(zip(possible_notes, NOTE_DISTRO_LIST)))
+                    next_length = random_note_length(max_length) 
+
+                    note_to_append = Midi_Note(channel, next_length, 127, note)
                     self.notes.append(note_to_append)
-                    
                     self.length += note_to_append.length
                     max_length = length - self.length
+                    if note_length < BEAT and self.length < length: #repeat
+                        if (random.random() > .8):
+                            continue
+                        repeat_beats = random.choice([1/4, 1/2, 1, 2, 3, 4])
+                        total = note_length
+                        while total < BEAT *repeat_beats and self.length < length:
+                            possible_notes = rotate_scale_to_note(key, self.notes[-1])
+                            up = random.choice([1, -1])
+                            possible_notes = [s +   up * 12 for s in possible_notes]
+
+
+                            note = weighted_choice(dict(zip(possible_notes, REPEAT_DISTRO_LIST)))
+                            
+                            note_to_append = Midi_Note(channel, next_length, 127, note)
+                            self.notes.append(note_to_append)
+                            self.length += note_to_append.length
+                            total += note_length
                 print("62 ----", stringify_list_of_notes(self.notes))
             else:
                 pass
@@ -70,52 +126,50 @@ class Melody():
         for note in self.notes:
             note.start(track)
             note.end(track)
-        pass
 
 # 1 beat = length=480 
-BEAT = 480
 
 with mido.MidiFile(type=1) as mid:
 
     song_name = "exported_song" + ".mid"
+    song_name = "test" + ".mid"
     time_signature = "4/4".split("/")
     time_signature = [int(n) for n in time_signature]
-    bpm = 120
+    bpm = 170
     channel = 1
-    measures = 15
+    measures = 30
     repeat_chance = .5
     scale = "major"
     key = Note("C", 3).apply_relation("scale", scale=scale)
     key = [n.number for n in key]
-
     info_track = mido.MidiTrack()
     info_track.append(mido.MetaMessage('set_tempo', tempo=mido.bpm2tempo(bpm)))
     mid.tracks.append(info_track)
     
+    for i in range(1):
+        track = mido.MidiTrack()
+        track.append(mido.MetaMessage('track_name', name="track_name", time=1))
+        mid.tracks.append(track)
 
-    track = mido.MidiTrack()
-    track.append(mido.MetaMessage('track_name', name="track_name", time=1))
-    mid.tracks.append(track)
+        measure_length = time_signature[1] * BEAT
+        for i in range(measures):
+            # going to be used later in more complicated melodies with rests
+            progress = 0
 
-    measure_length = time_signature[1] * BEAT
-    for i in range(measures):
-        # going to be used later in more complicated melodies with rests
-        progress = 0
-
-        num_melodies = random.choice([1, 2, 4]) # maybe change depending on time signature, 
-                                                # but not working thirds yet
-        melody_length = measure_length / num_melodies
-        # "energy" and pacing should be around here 
-        melodies = [Melody(channel, key=key, length=melody_length, random=True, scale=scale)]
-        for i in range(num_melodies - 1):
-            if (random.random() < repeat_chance):
-                melodies.append((melodies[-1]).copy())
-            else:
-                melodies.append(Melody(channel, key=key, length=melody_length, random=True, scale=scale))
-        for m in melodies:
-            m.write_to_track(track)
-        print("---")
-    track.append(mido.MetaMessage('end_of_track', time=1))
+            num_melodies = random.choice([1, 2, 4]) # maybe change depending on time signature, 
+                                                    # but not working thirds yet
+            melody_length = measure_length / num_melodies
+            # "energy" and pacing should be around here 
+            melodies = [Melody(channel, key=key, length=melody_length, random=True, scale=scale)]
+            for i in range(num_melodies - 1):
+                if (random.random() < repeat_chance):
+                    melodies.append((melodies[-1]).copy())
+                else:
+                    melodies.append(Melody(channel, key=key, length=melody_length, random=True, scale=scale))
+            for m in melodies:
+                m.write_to_track(track)
+            print("---", i)
+        track.append(mido.MetaMessage('end_of_track', time=1))
     mid.save(song_name)
 
     """

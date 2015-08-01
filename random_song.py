@@ -2,61 +2,9 @@ import mido
 import random
 from midi_note import Midi_Note
 from note import Note
-# See what's less confusing in the end - generating a bunch of notes 
-# and then their messages, or generating and working note by note
-# Things to consider
-#   Repetition
-#   Key
-#   Pacing in relation to closeby notes 
+import presets
 
-
-BEAT = 480
-LENGTH_DIST = {
-    BEAT / 16 : 0,    #
-    BEAT / 8  : 0,    #
-    BEAT / 4  : 1,    #
-    BEAT / 2  : 8,    # 
-    BEAT / 1  : 16,    # Quarter in /4 time sig
-    BEAT * 2  : 5,    #
-    BEAT * 3  : 3,    #
-    BEAT * 4  : 2     # 
-}
-
-REST_CHANCE = .1       
-
-LENGTH_DIST = {
-    BEAT / 16 : 0,    #
-    BEAT / 8  : 0,    #
-    BEAT / 4  : 18,    #
-    BEAT / 2  : 16,    # 
-    BEAT / 1  : 10,    # Quarter in /4 time sig
-    BEAT * 2  : 1,    #
-    BEAT * 3  : 1,    #
-    BEAT * 4  : 0     # 
-}
-NOTE_DISTRO_LIST = [4, 7, 8, 3, 8, 1, 2, 3]
-REPEAT_DISTRO_LIST = [8, 9, 5, 4, 3, 0, 0, 1]
-REPEAT_DISTRO_LIST = [0, 9, 5, 4, 3, 0, 0, 1]
-
-#print(LENGTH_DIST, type(LENGTH_DIST))
-
-def weighted_choice(choices):
-    #print(choices)
-    total = sum([weight for weight in choices.values()])
-    rand = random.uniform(0, total)
-    upto = 0
-    for choice, weight in choices.items():
-        if upto + weight > rand:
-            return choice
-        upto += weight
-
-def stringify_list_of_notes(l, sharp=True):
-    res = ""
-    for note in l:
-        res += note.get_note(sharp) + str(note.number) + " "+  str(note.length) + "|"
-    return res
-
-def random_note_length(max_len):
+def random_note_length(max_len, length_dist):
     res = {}
     for choice, weight in LENGTH_DIST.items():
         if choice <= max_len:

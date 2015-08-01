@@ -3,6 +3,8 @@ Refactoring
 
 Fix bug - too many rests
 
+dotted notes - should also have a pair chance with eigth notes
+
 Make key and "starting note" seperate - and see if you can make the starting note relative to last melody
 	but since this is intended to be a melody mainly generator, default to note3 if unspecified - can be edited later 
 

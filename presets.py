@@ -1,3 +1,5 @@
+# Just notes for now
+
 """
 BEAT = 480
 LENGTH_DIST = {

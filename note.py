@@ -1,8 +1,11 @@
+from utility import stringify_list_of_notes 
 
 class Note():
-    # both are used to convert string <-> midi#
-    scale_A = ["A", "A#/Bb", "B", "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab"]
-    scale_C = ["C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B"]
+    """ Base note class that contains musical logic and relations """
+    # both scales are used to convert string <-> midi - octaves increase 
+    # on C but the midi notes start on A
+    scale_A = ("A", "A#/Bb", "B", "C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab")
+    scale_C = ("C", "C#/Db", "D", "D#/Eb", "E", "F", "F#/Gb", "G", "G#/Ab", "A", "A#/Bb", "B")
     scale_start = 21
     scale_end = 108
 
@@ -11,11 +14,32 @@ class Note():
         if len(args) == 1:
             self._create_from_note_number(args[0])
         elif len(args) == 2:
-            self._create_from_note(args[0], args[1])
+            self._create_from_string(args[0], args[1])
         else: 
             raise ValueError("Incorrect inputs: {}".format(args))
 
-    def _create_from_note(self, note, octave):
+    def get_octave(self):
+        """ Returns the octave number of the note """
+        return int(self.number / 12) - 1
+
+    def get_note(self, sharp=True):
+        """ Returns the letter part of the note """
+        note = Note.scale_A[(self.number - 21) % 12]
+        if "/" in note:
+            if sharp:
+                note = note[:2]
+            else:
+                note = note[3:]
+        return note
+
+    def to_string(self, sharp=True):
+        """ Returns a string representation of the note """
+        note = self.get_note(sharp)
+        octave = self.get_octave()
+        return "{:2} {}".format(note, octave)
+
+    def _create_from_string(self, note, octave):
+        """ Creates a note given a string representation of a note and an octave"""
         note_number = 0
         if "#" in note or "b" in note:
             for (i, note_string) in enumerate(Note.scale_C):
@@ -27,31 +51,13 @@ class Note():
         self.number = note_number + (octave * 12) + 12
 
     def _create_from_note_number(self, note_number):
-        if (note_number > Note.scale_end) or (note_number < Note.scale_start):
-            raise IndexError("Invalid midi note")
+        """ Creates a note from a note number """ 
+        assert(note_number <= Note.scale_end and note_number >= Note.scale_start)
         self.number = note_number
 
-    def get_octave(self):
-        # 11 = 21 (starting note) - 10 (because for some reason, 
-        # pianos start on A but octave numbers are incremented on C)
-        return int(self.number / 12) - 1
-
-    def get_note(self, sharp=True):
-        note = Note.scale_A[(self.number - 21) % 12]
-        if "/" in note:
-            if sharp:
-                note = note[:2]
-            else:
-                note = note[3:]
-        return note
-
-    def to_string(self, sharp=True):
-        note = self.get_note(sharp)
-        octave = self.get_octave()
-        return "{:2} {}".format(note, octave)
-
     def apply_relation(self, relation, direction=1, sharp=True, **kargs):
-        steps = []
+        """ General note relations """
+        steps = tuple()
         if relation == "2nd":
             steps = (2,)
         elif relation == "3rd":
@@ -80,13 +86,12 @@ class Note():
         elif relation == "repeat":
             steps = (12,)
         else: 
-            raise ValueError("Incorrect arguments")
+            raise ValueError("Incorrect arguments {} for {}".format(kargs, relation))
         steps = [s * direction for s in steps]
         return self._generate_notes_from_note(steps)
-        # relation, num_notes
-        # Things that should be handled outside notes - repetition, going off chord,  1 steps
 
     def _generate_rotated_notes(self, sharp=False):
+        """ Generates a list of notes with the current note at the beginning """
         note = self.get_note(sharp)
         rotated_notes = list(Note.scale_A)
         if "#" in note:
@@ -121,6 +126,7 @@ class Note():
         return self._generate_notes_from_note(steps)
 
     def _generate_notes_from_note(self, steps):
+        """ Helps generate note relations based on the number of steps between notes """
         result = [self]
         difference = 0
         for step in steps:
@@ -129,12 +135,6 @@ class Note():
         return result
 
 if __name__ == "__main__":
-    def stringify_list_of_notes(l, sharp=True):
-        res = ""
-        for note in l:
-            res += note.get_note(sharp) + "|"
-        return res
-
     for i in range(21, 109):
         n = Note(i)
         n2 = Note(n.get_note(), n.get_octave())

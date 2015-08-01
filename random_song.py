@@ -21,7 +21,9 @@ LENGTH_DIST = {
     BEAT * 3  : 3,    #
     BEAT * 4  : 2     # 
 }
-"""
+
+REST_CHANCE = .1       
+
 LENGTH_DIST = {
     BEAT / 16 : 0,    #
     BEAT / 8  : 0,    #
@@ -32,15 +34,14 @@ LENGTH_DIST = {
     BEAT * 3  : 1,    #
     BEAT * 4  : 0     # 
 }
-"""
 NOTE_DISTRO_LIST = [4, 7, 8, 3, 8, 1, 2, 3]
 REPEAT_DISTRO_LIST = [8, 9, 5, 4, 3, 0, 0, 1]
 REPEAT_DISTRO_LIST = [0, 9, 5, 4, 3, 0, 0, 1]
 
-print(LENGTH_DIST, type(LENGTH_DIST))
+#print(LENGTH_DIST, type(LENGTH_DIST))
 
 def weighted_choice(choices):
-    print(choices)
+    #print(choices)
     total = sum([weight for weight in choices.values()])
     rand = random.uniform(0, total)
     upto = 0
@@ -68,6 +69,9 @@ def rotate_scale_to_note(scale, note):
         result.insert(0, result.pop())
     return result
 
+
+watot = [0,0]
+
 class Melody():
     def __init__(self, channel, **kargs):
         try:
@@ -85,13 +89,14 @@ class Melody():
                 max_length = length - note_length
                 while self.length < length:
                     possible_notes = rotate_scale_to_note(key, self.notes[-1])
-
+                    is_rest = random.random() < REST_CHANCE
+                    watot[0] += 1
+                    watot[1] += is_rest
                     up = random.choice([1, -1])
                     possible_notes = [s + up * 12 for s in possible_notes]
                     note = weighted_choice(dict(zip(possible_notes, NOTE_DISTRO_LIST)))
                     next_length = random_note_length(max_length) 
-
-                    note_to_append = Midi_Note(channel, next_length, 127, note)
+                    note_to_append = Midi_Note(channel, next_length, 127 * is_rest, note)
                     self.notes.append(note_to_append)
                     self.length += note_to_append.length
                     max_length = length - self.length
@@ -107,12 +112,14 @@ class Melody():
 
 
                             note = weighted_choice(dict(zip(possible_notes, REPEAT_DISTRO_LIST)))
-                            
-                            note_to_append = Midi_Note(channel, next_length, 127, note)
+                            is_rest = random.random() < REST_CHANCE
+                            watot[0] += 1
+                            watot[1] += is_rest
+                            note_to_append = Midi_Note(channel, next_length, 127 * is_rest, note)
                             self.notes.append(note_to_append)
                             self.length += note_to_append.length
                             total += note_length
-                print("62 ----", stringify_list_of_notes(self.notes))
+                #print("62 ----", stringify_list_of_notes(self.notes))
             else:
                 pass
         except Exception as E:
@@ -152,7 +159,7 @@ with mido.MidiFile(type=1) as mid:
         mid.tracks.append(track)
 
         measure_length = time_signature[1] * BEAT
-        for i in range(measures):
+        for meas in range(measures):
             # going to be used later in more complicated melodies with rests
             progress = 0
 
@@ -168,59 +175,7 @@ with mido.MidiFile(type=1) as mid:
                     melodies.append(Melody(channel, key=key, length=melody_length, random=True, scale=scale))
             for m in melodies:
                 m.write_to_track(track)
-            print("---", i)
+            print("173--- measure={}".format(meas))
         track.append(mido.MetaMessage('end_of_track', time=1))
     mid.save(song_name)
-
-    """
-    # Try and find a decent tempo range that holds most songs
-    # any songs that should be outside can be altered in another program
-    #mid.ticks_per_beat = random.randint(150, 200)
-    #mid.ticks_per_beat = 120
-    key = Note("A", 3).generate_scale("natural minor", True)
-    key = Note("C", 3).apply_relation("4th", True)
-    key = Note("C", 3).apply_relation("scale", scale="major")
-    key = [n.number for n in key]
-
-    # For now, only one track
-    track = mido.MidiTrack()
-    mid.tracks.append(track)
-    
-    # 1-96 should be a good number of instrument types
-    track.append(mido.Message('control_change', channel=10, control=random.randint(0, 95), value=0, time=1))
-    track.append(mido.MetaMessage('set_tempo', tempo=mido.bpm2tempo(bpm)))
-    # 50 random notes for now - later, change to measures if possible 
-    for i in range(0, 20):
-        # Note range for midi is 21-108
-        # I haven't actually a clue how tempo and length relates to measures yet
-        # default channel = 2
-        # no overlapping notes yet
-        # def __init__(self, channel, length, velocity, *args):
-
-        # 480  = quarter note
-        note = Midi_Note(2, BEAT, 127, random.choice(key)) # find way to write this nicely later
-        #print(note.to_string(), note.length) #note = Midi_Note(random.randint(21, 108), random.randint(1, 6) * 48, velocity=127, channel=2) # find way to write this nicely later
-        note.start(track)
-        note.end(track)
-    
-    """
-
-    """
-        Notes
-            2nd - rare
-            chord = should be common if melody? 
-            Fourth - read up on what it's supposed to be again but it shouldn't happen too often
-            next-note-in-scale = often?
-            repeat note = I have a feeling this will have to do mroe with tempo, but give it a scale depending on pacing of the song
-            Octave - I don't think often?
-                actually, this might be a "calculate, and see if it jumps/falls an octave"
-            Play additional note in chord = only if it's on an emphasis beat, then maybe a percentage
-            Look up more on how the key of a song affects things and changing it
-        For now, since I can handle harmonies okay, focus on melody generating - HOWEVER, for future considerations, consider unsynced chords
-            (mainly where the notes are like)
-            -------
-            ---- 
-            or 
-            -------
-               ----
-    """
+    print (Midi_Note.tot, Midi_Note.rest, watot)

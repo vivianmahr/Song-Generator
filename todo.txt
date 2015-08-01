@@ -1,4 +1,7 @@
+
 Refactoring
+
+Fix bug - too many rests
 
 Make key and "starting note" seperate - and see if you can make the starting note relative to last melody
 	but since this is intended to be a melody mainly generator, default to note3 if unspecified - can be edited later 
@@ -18,3 +21,14 @@ UI - this is a giant pile of arguments
 Choose instrument it plays in 
 
 multiple notes playing at a time 
+
+key changes in the middle of a song
+
+programmable options that might be kinda strange to include outside vertain situations - 
+	if last melodies mainly moved up, higher chance of jumping octaves or going down
+	repeat melodies with a one note difference
+	repeat melody, repeat melody, new melody but start on the same notes
+	emphasis on 1 and 3 beats of 4/4?
+	increase chances of a note not having the same length as the previous note - more erratic timing
+
+analyze midi, attempt style imitation

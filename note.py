@@ -125,6 +125,21 @@ class Note():
 
         return self._generate_notes_from_note(steps)
 
+    def calibrate_scale(self, scale, direction):
+        rotations = 0
+        result = list(scale)
+        while result[0].get_note() != self.get_note() and rotations < 8:
+            rotations += 1
+            result.insert(0, result.pop())
+        check_index = direction
+        while result[check_index].number != self.number:
+            increment = -12
+            if result[check_index].number >  self.number:
+                increment = 12
+            for i in range(len(result)):
+                result[i].number += increment
+        return result
+
     def _generate_notes_from_note(self, steps):
         """ Helps generate note relations based on the number of steps between notes """
         result = [self]

@@ -30,6 +30,13 @@ def choose_random_weighted_choice(choices):
 
 
 
+def rotate_scale_to_note(scale, note):
+    result = list(scale)
+    while note.Note(result[0]).get_note()[0] != note.get_note()[0]:
+        result.insert(0, result.pop())
+    return result
+
+
 if __name__ == "__main__":
     print_song("test.mid")
     choices = {

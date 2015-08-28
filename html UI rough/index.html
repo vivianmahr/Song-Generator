@@ -1,0 +1,176 @@
+<!DOCTYPE HTML>
+<html>
+    <link rel="stylesheet" type="text/css" href="default.css"/>
+    <body>
+        <div id="window-box">
+            <div id="bar">
+                <p> =) Name of Program</p>
+            </div>
+            <div id="premise-bar" class="section">
+                <label>
+                    Preset:
+                </label>
+                <select>
+                    <option>None</option>
+                    <option>Fast</option>
+                </select>
+            </div>
+            <div id="left-side">
+                <div id="timing-section" class="section">
+                    <div class="label">
+                        <span class="words">Timing</span>
+                    </div>
+                    <label> Time Signature: </label>
+                    <select>
+                        <option>4</option>
+                        <option>3</option>
+                    </select>
+                    <span> / 4 </span>
+                    
+                    <div class="divider"></div>
+                    <label>
+                        BPM:
+                    <label>
+                    <input class="short-input" type="text" value="120"/>
+
+                    <div class="divider"></div>
+                    <label>
+                        Measures:
+                    <label>
+                    <input class="short-input" type="text" value="20"/>
+
+                    <div class="divider"></div>
+                    <label>
+                        Ticks/Beat:
+                    <label>
+                    <input class="short-input" type="text" value="480"/>
+                </div>
+                <div id="midi-info-section" class="section">
+                    <div class="label">
+                        <span class="words">Midi Configuration</span>
+                    </div>
+                    <label> Key: </label>
+                    <select>
+                        <option>A#</option>
+                        <option>C</option>
+                        <option>Bb</option>
+                    </select>
+                    <select>
+                        <option>Major</option>
+                        <option>Minor</option>
+                    </select>
+                    <div class="divider"></div>                    
+                    Velocity : <input class="short-input" type="text" value="127"/>
+                    <div class="divider"></div>                    
+                    Tracks : <input class="num-input" type="text" value="1"/>
+                    <div class="divider"></div>                    
+                    Type :
+                    <select>
+                        <option>0</option>
+                        <option>1</option>
+                    </select>                  
+                    
+                </div>
+            </div>
+            <div id="random-section" class="section">
+                <div class="label">
+                    <span class="words">Randomization Factors</span>
+                </div>
+                    Repeat Note Length Chance : <input class="num-input" type="text" value="50"/> %
+                <div id="column-box">
+                    <div class="section column">
+                        <div class="label">
+                            <span class="words">Note Length</span>
+                        </div>
+                        16 : <input class="num-input" type="text" value="1"/> /10 = 10%
+                            <div class="divider"></div>
+                        8th: <input class="num-input" type="text" value="2"/> /10 = 20%  
+                            <div class="divider"></div>
+                        1/4: <input class="num-input" type="text" value="3"/> /10 = 30%
+                            <div class="divider"></div>
+                        1/2: <input class="num-input" type="text" value="2"/> /10 = 20%
+                            <div class="divider"></div>
+                        o.5: <input class="num-input" type="text" value="1"/> /10 = 10%
+                            <div class="divider"></div>
+                        wh: <input class="num-input" type="text" value="1"/> /10 = 10%
+                            <div class="divider"></div>
+                        &nbsp;&nbsp;&nbsp;+_____
+                            <div class="divider"></div>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10
+                    </div>
+                    <div class="section column">
+                        <div class="label">
+                            <span class="words">Note Relation</span>
+                        </div>  
+                                rep : <input class="num-input" type="text" value="1"/> /10 = 10%
+                                    <div class="divider"></div>
+                                2nd: <input class="num-input" type="text" value="1"/> /10 = 10%
+                                    <div class="divider"></div>
+                                3rd: <input class="num-input" type="text" value="1"/> /10 = 10%  
+                                    <div class="divider"></div>
+                                4th: <input class="num-input" type="text" value="3"/> /10 = 30%
+                                    <div class="divider"></div>
+                                5th: <input class="num-input" type="text" value="1"/> /10 = 10%
+                                    <div class="divider"></div>
+                                6th: <input class="num-input" type="text" value="1"/> /10 = 10%
+                                    <div class="divider"></div>
+                                7th: <input class="num-input" type="text" value="1"/> /10 = 10%
+                                    <div class="divider"></div>
+                                oct: <input class="num-input" type="text" value="1"/> /10 = 10%
+                                    <div class="divider"></div>
+                                &nbsp;&nbsp;&nbsp;+_____
+                                    <div class="divider"></div>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10
+                    </div>
+                    <div class="section column borderless-right">
+                        <div class="label">
+                            <span class="words">Repeat Notes</span>
+                        </div>
+                            rep : <input class="num-input" type="text" value="1"/> /10 = 10%
+                                <div class="divider"></div>
+                            2nd: <input class="num-input" type="text" value="1"/> /10 = 10%
+                                <div class="divider"></div>
+                            3rd: <input class="num-input" type="text" value="1"/> /10 = 10%  
+                                <div class="divider"></div>
+                            4th: <input class="num-input" type="text" value="3"/> /10 = 30%
+                                <div class="divider"></div>
+                            5th: <input class="num-input" type="text" value="1"/> /10 = 10%
+                                <div class="divider"></div>
+                            6th: <input class="num-input" type="text" value="1"/> /10 = 10%
+                                <div class="divider"></div>
+                            7th: <input class="num-input" type="text" value="1"/> /10 = 10%
+                                <div class="divider"></div>
+                            oct: <input class="num-input" type="text" value="1"/> /10 = 10%
+                                <div class="divider"></div>
+                            &nbsp;&nbsp;&nbsp;+_____
+                                <div class="divider"></div>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;10
+
+
+                    </div>
+                    
+                </div>
+                
+            </div>
+           <div id="premise-bar2" class="section">
+               <label>
+                    Name:
+                </label>
+                <input id="name-input" value="default.mid">
+                </input>
+                <input type="button" value="Generate Midi">
+                </input>
+                <div class="divider"></div>
+                <label>
+                    Name:
+                </label>
+                <input id="name-input2">
+                </input>
+                <input type="button" disabled value="Play Midi">
+                </input>
+                <input type="button" disabled value="Stop">
+                </input>
+            </div> 
+        </div>
+    </body>
+</html>

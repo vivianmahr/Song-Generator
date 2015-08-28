@@ -18,21 +18,20 @@ def random_song(name, settings, song_type=1):
             track = mido.MidiTrack()
             track.append(mido.MetaMessage('track_name', name="track" + str(i), time=1))
             mid.tracks.append(track)
-
+            
             measure_length = settings.time_signature[1] * presets.BEAT
             for meas in range(settings.measures):
-                num_melodies = random.choice([1, 2, 4]) # maybe change depending on time signature, 
-                                                        # but not working thirds yet
+                num_melodies = random.choice([1, 2, 4]) # Only for 4/4
                 melody_length = measure_length / num_melodies
-                melodies = [Melody(settings.channel, settings, key=settings.key, length=melody_length, random=True)]
-                for i in range(num_melodies - 1):
+                melodies = [Melody(i, settings, key=settings.key, length=melody_length, random=True)]
+                for n in range(num_melodies - 1):
                     if (random.random() < settings.melody_repeat_chance):
                         melodies.append((melodies[-1]).copy())
                     else:
-                        melodies.append(Melody(settings.channel, settings, key=settings.key, length=melody_length, random=True))
+                        melodies.append(Melody(i, settings, key=settings.key, length=melody_length, random=True))
                 for m in melodies:
                     m.write_to_track(track)
             track.append(mido.MetaMessage('end_of_track', time=1))
         mid.save(name)
 
-random_song("test", presets.FAST)
+random_song("test.mid", presets.FAST)

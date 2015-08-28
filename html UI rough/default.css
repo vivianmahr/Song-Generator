@@ -1,0 +1,155 @@
+body {
+    background:black;
+}
+
+#window-box {
+    height: 500px;
+    width: 700px;
+    background: white;
+    margin: auto;
+    margin-top: 70px;
+    position: relative;
+}
+
+#bar {
+    background: #CECECE;
+    height: 30px;
+    left: 0;
+    right: 0;
+    display: block;
+    padding-left: 5px;
+    position: relative;
+}
+#bar p {
+    padding-top: 7px;
+}
+#bar::after{
+    content:"X";
+    background: red;
+    color: white;
+    top: 0;
+    bottom: 0;
+    width: 25px;
+    text-align: center;
+    padding-top: 7px;
+    right: 0;
+    position: absolute;
+}
+.divider {
+    clear: both;
+    height: 5px;
+}
+.section {
+    padding: 1rem;
+    border: 1px solid grey;
+}
+#name-input {
+    width: 450px;
+}
+#name-input2 {
+    width: 450px;
+}
+
+
+#left-side {
+    height: 100%;
+    width: 30%;
+    float: left;
+}
+#left-side .section {
+    border-top: none;
+}
+
+#random-section {
+    right: 0;
+    width: 66%;
+    bottom: 0;
+    top: 82px;
+    position: absolute;
+}
+
+#random-section {
+    background: white;
+}
+
+.label {
+    font-size: 1rem;
+    border-bottom: 1px solid #CECECE;
+    padding-bottom: 7px;
+    margin-bottom: 7px;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    margin-top: -.3rem;
+}
+
+.label .words{
+    padding-left: 1rem;
+}
+
+.short-input {
+    width: 30px;
+}
+#column-box {
+    margin-top: .5rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
+    overflow: hidden;
+    bottom: 0;
+    height: 88.5%;
+}
+#column-box .section {
+    width: 26%;
+    float: left;
+    border-left: none;
+    height: 100%;
+    border-bottom: none;
+}
+.borderless-right {
+    border-right: none;
+}
+.num-input {
+    width: 15px;
+}
+#midi-info-section {
+    height: 200px;
+}
+
+/* 
+#left-side {
+    background: cyan;
+}
+#timing-section {
+    background: yellow;
+}
+
+#midi-info-section {
+    background: blue;
+}
+
+#random-section {
+    background: red;
+}
+
+#premise-bar{
+    background: green;
+}
+ */
+
+ #premise-bar2{
+    background: white;
+    bottom: -40px;
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+
+
+
+
+
+
+
+
+
+

@@ -1,4 +1,13 @@
-# Just notes for now
+
+"""
+   length_dist
+   note_distro
+   scale - ...whaaaaa
+   rest_chance - doesn't do anything yet
+   key - rework how it works, along with disconnectng it from a set note on the keyboard and leaving it to a straight A (for example) 
+   direction chance
+
+"""
 import note
 BEAT = 480
 class Preset():
@@ -20,8 +29,7 @@ class Preset():
         #                     r  2  3  4  5  6  7  octave
         self.repeat_distro = [8, 9, 5, 4, 3, 0, 0, 1]
         self.bpm = 120
-        self.channel = 1
-        self.measures = 1
+        self.measures = 20
         self.melody_repeat_chance = .5
         self.scale = "major"
         self.rest_chance = .3
@@ -53,6 +61,7 @@ class Preset():
 DEFAULT = Preset()
 
 FAST = Preset()
+FAST.set_measures(20)
 FAST.set_bpm(170)
 FAST.set_length_distribution({
     BEAT / 4  : 18,    

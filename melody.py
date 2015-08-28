@@ -5,9 +5,10 @@ import random
 import midi_note
 
 class Melody():
-    def __init__(self, channel, preset, **kargs):
+    def __init__(self, channel, preset, previous_note="", **kargs):
         try:
             if kargs["random"]:
+                self.preset = preset
                 self._max_note_length = kargs["length"]
                 self._max_length = kargs["length"]
                 self.key = kargs["key"]
@@ -15,7 +16,6 @@ class Melody():
                 self.notes = [self._random_note(preset)]
                 self._recalculate_max_note_length()
                 while self._max_note_length > 0:
-                    input()
                     self.notes.append(self._random_note(preset))
                     self._recalculate_max_note_length()
                     print(self._max_note_length)
@@ -59,13 +59,15 @@ class Melody():
         self._max_note_length = self._max_length - self._length
 
     def copy(self):
+        n = Melody(self.channel, self.preset, random=False)
+        n.notes = list(self.notes)
         return self
 
     def _random_note(self, dist):
-        print(dist.length_dist)
         note_length = self._random_note_length(dist.length_dist)
         note_number = random.choice(self.key).number
-        return midi_note.Midi_Note(self.channel, note_length, dist.velocity, note_number)
+        velocity = dist.velocity if random.random() > dist.rest_chance else 0 
+        return midi_note.Midi_Note(self.channel, note_length, velocity, note_number)
 
     def _random_note_length(self, dist):#length_dist
         """Chooses a random note length given a maximum length and distribution"""

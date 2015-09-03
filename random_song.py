@@ -34,4 +34,4 @@ def random_song(name, settings, song_type=1):
             track.append(mido.MetaMessage('end_of_track', time=1))
         mid.save(name)
 
-random_song("test.mid", presets.FAST)
+random_song("test.mid", presets.DEFAULT)

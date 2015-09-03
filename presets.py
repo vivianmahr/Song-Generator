@@ -10,6 +10,7 @@
 """
 import note
 BEAT = 480
+OCTAVE_STEPS = 12
 class Preset():
     def __init__(self):
         # Default is a bell curve kind of distribution - rather slow with a heavy emphasis on quarter notes
@@ -36,6 +37,9 @@ class Preset():
         self.key = note.Note("C#", 3).apply_relation("scale", scale=self.scale)
         self.tracks = 1
         self.velocity = 127
+        self.allow_repeat_rests = False
+        self.repeat_note_length_chance = .3
+        self.step_up_chance = .5
     def set_tracks(self, tracks):
         self.tracks = tracks
     def set_time_signature(self, time_sig):
